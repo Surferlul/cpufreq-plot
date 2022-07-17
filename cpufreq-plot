@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from math import ceil
+import psutil
+
+
+def animate(x_vals, y_vals):
+    def wrapper(_):
+        y_vals.pop(0)
+        frequencies = [i.current for i in psutil.cpu_freq(percpu=True)]
+        y_vals.append(frequencies)
+        plt.cla()
+        plt.plot(x_vals, y_vals)
+        plt.ylim(0, None)
+        plt.gca().invert_xaxis()
+
+    return wrapper
+
+
+def plot_frequency(interval, time):
+    size = ceil(time * 1000 / interval)
+    cpu_count = psutil.cpu_count()
+    x_vals = [i / 1000 for i in range(0, time * 1000, interval)][::-1]
+    y_vals = [[0] * cpu_count for i in range(size)]
+    _ = FuncAnimation(plt.gcf(), animate(x_vals, y_vals), interval=interval)
+    plt.tight_layout()
+    plt.show()
+
+
+def main():
+    import sys
+    # 0.5s, 1min
+    interval = 500
+    time = 60
+    if len(sys.argv) > 1:
+        interval = int(sys.argv[1])
+    if len(sys.argv) > 2:
+        time = int(sys.argv[2])
+    plot_frequency(interval, time)
+
+
+if __name__ == "__main__":
+    main()
