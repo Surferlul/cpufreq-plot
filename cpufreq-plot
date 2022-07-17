@@ -14,7 +14,9 @@ def animate(x_vals, y_vals):
         plt.cla()
         plt.plot(x_vals, y_vals)
         plt.ylim(0, None)
+        plt.xlim(x_vals[-1], x_vals[0])
         plt.gca().invert_xaxis()
+        plt.tight_layout()
 
     return wrapper
 
@@ -25,7 +27,6 @@ def plot_frequency(interval, time):
     x_vals = [i / 1000 for i in range(0, time * 1000, interval)][::-1]
     y_vals = [[0] * cpu_count for i in range(size)]
     _ = FuncAnimation(plt.gcf(), animate(x_vals, y_vals), interval=interval)
-    plt.tight_layout()
     plt.show()
 
 
